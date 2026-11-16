@@ -1,0 +1,388 @@
+/* ============================================================
+   ScreenSense · styles
+   1. Theme tokens   2. Base   3. Top bar   4. Intro
+   5. Slider rows    6. Face   7. Actions   8. Responsive
+   ============================================================ */
+
+/* ---------- 1. Theme tokens ---------- */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #1a2233;
+  --ink-soft: #5f6978;
+  --line: #e2e6ed;
+  --track: #e6e9ef;
+  --accent: #1b7f79;
+  --accent-ink: #ffffff;
+  --focus: #1b7f79;
+  --shadow: 0 10px 30px rgba(26, 34, 51, 0.10);
+
+  /* face colour is set per slider by JS */
+  --face: #ffd94d;
+
+  --font-display: "Bricolage Grotesque", "DM Sans", sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  --thumb: 26px;      /* phone thumb */
+  --face-size: 56px;  /* desktop face thumb */
+  --track-h: 14px;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f141b;
+  --surface: #161c25;
+  --ink: #eceff4;
+  --ink-soft: #9aa4b3;
+  --line: #27303d;
+  --track: #232b37;
+  --accent: #4fd1c5;
+  --accent-ink: #0f141b;
+  --focus: #4fd1c5;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- 2. Base ---------- */
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(30px, 5vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 6px 0 12px;
+}
+
+p { margin: 0; }
+
+button { font: inherit; cursor: pointer; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* ---------- 3. Top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+/* ---------- 4. Intro ---------- */
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+.step-count {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.lede {
+  color: var(--ink-soft);
+  font-size: 17px;
+  max-width: 44ch;
+}
+
+/* ---------- 5. Slider rows ---------- */
+.questions {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.q {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.q-head {
+  display: flex;
+  flex-wrap: wrap;          /* long labels push the value down */
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+}
+
+.q-label {
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.q-value {
+  margin-left: auto;        /* stays right even after wrapping */
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.q-value strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* slider area: face + track side by side on phone */
+.q-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.q-face {
+  flex: none;
+  width: var(--face-size);
+  height: var(--face-size);
+  /* --face-scale grows with the value (set by JS) */
+  transform: scale(var(--face-scale, 1));
+  transform-origin: center;
+  transition: transform 0.12s ease-out;
+}
+
+.q-track-wrap {
+  position: relative;
+  flex: 1;
+  height: 44px;           /* comfortable touch target */
+  display: flex;
+  align-items: center;
+}
+
+.q-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--track-h);
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.q-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: var(--face);
+  transition: background 0.15s linear;
+}
+
+/* the real control sits on top, visually quiet */
+.q-range {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  z-index: 2;
+}
+
+.q-range::-webkit-slider-runnable-track {
+  height: 44px;
+  background: transparent;
+}
+.q-range::-moz-range-track {
+  height: 44px;
+  background: transparent;
+}
+
+.q-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: calc((44px - var(--thumb)) / 2);
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--face);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  cursor: grab;
+}
+.q-range::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--face);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  cursor: grab;
+}
+.q-range:active::-webkit-slider-thumb { cursor: grabbing; }
+
+/* ---------- 6. Face ---------- */
+.face {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.face .skin { fill: var(--face); transition: fill 0.15s linear; }
+.face .feature {
+  fill: #3a2a1e;
+  stroke: #3a2a1e;          /* rounds the lens tips */
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+.face .line {
+  fill: none;
+  stroke: #3a2a1e;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+.face .cheek { fill: #ff6b6b; }
+.face .sweat { fill: #6fb9ff; }
+
+/* a soft shadow on the wrapper, not an SVG filter (cheaper) */
+.q-face {
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgba(26, 34, 51, 0.16);
+}
+:root[data-theme="dark"] .q-face {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* strained wobble, only at the very top */
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
+}
+.q-face.is-stressed .face {
+  animation: wobble 0.5s ease-in-out infinite;
+  transform-origin: 50% 60%;
+}
+
+/* ---------- 7. Actions ---------- */
+.actions {
+  margin-top: 48px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 22px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-primary:active { transform: translateY(1px); }
+
+/* ---------- 8. Responsive: tablet & laptop ---------- */
+@media (min-width: 720px) {
+  :root {
+    --face-size: 60px;
+    --track-h: 16px;
+  }
+
+  .page { padding-top: 40px; }
+
+  .q { gap: 14px; }
+
+  /* the face now floats over the track and becomes the handle */
+  .q-face {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(0, -50%) scale(var(--face-scale, 1));
+    transform-origin: center;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .q-track-wrap { height: 64px; }
+
+  /* hide the native thumb; its hit area matches the face */
+  .q-range { height: 64px; }
+  .q-range::-webkit-slider-runnable-track { height: 64px; }
+  .q-range::-moz-range-track { height: 64px; }
+  .q-range::-webkit-slider-thumb {
+    width: var(--face-size);
+    height: var(--face-size);
+    margin-top: calc((64px - var(--face-size)) / 2);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .q-range::-moz-range-thumb {
+    width: var(--face-size);
+    height: var(--face-size);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  /* grab = grow */
+  .q.is-dragging .q-face {
+    transform: translate(0, -50%)
+               scale(calc(var(--face-scale, 1) * 1.2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .q-face, .q-fill, .face .skin { transition: none; }
+  .q-face.is-stressed .face { animation: none; }
+  .q.is-dragging .q-face {
+    transform: translate(0, -50%) scale(var(--face-scale, 1));
+  }
+}
