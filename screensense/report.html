@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ScreenSense · Your result</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/report.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="#">ScreenSense</a>
+
+    <button
+      id="themeToggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Switch to dark theme"
+    >
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2" />
+        <path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6
+                 M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8
+                 M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
+      </svg>
+    </button>
+  </header>
+
+  <main class="page">
+
+    <!-- shown when there are no saved answers -->
+    <section class="empty" id="emptyState" hidden>
+      <h1>No answers yet</h1>
+      <p class="lede">
+        Your result appears here after you finish the check.
+        It takes about two minutes.
+      </p>
+      <div class="actions actions-left">
+        <a class="btn-primary" href="assess.html">Start the check</a>
+      </div>
+    </section>
+
+    <!-- the result (filled by report.js) -->
+    <div id="result" hidden>
+
+      <section class="result-head">
+        <p class="step-count">Your result</p>
+        <h1 id="levelName">Moderate risk</h1>
+        <p class="lede" id="levelSummary"></p>
+      </section>
+
+      <!-- gauge: track, filled arc, level gaps, face in the middle -->
+      <section class="gauge-card" aria-labelledby="levelName">
+        <div class="gauge">
+          <svg class="gauge-svg" viewBox="0 0 220 124" aria-hidden="true">
+            <path class="gauge-track" pathLength="100"
+                  d="M20 110 A90 90 0 0 1 200 110" />
+            <path class="gauge-fill" id="gaugeFill" pathLength="100"
+                  d="M20 110 A90 90 0 0 1 200 110" />
+            <g id="gaugeGaps"></g>
+          </svg>
+
+          <div class="gauge-face" id="gaugeFace"></div>
+        </div>
+
+        <div class="gauge-scale" aria-hidden="true">
+          <span>Low</span><span>High</span>
+        </div>
+
+        <p class="gauge-score">
+          <strong id="scoreNumber">0</strong>
+          <span>out of <span id="scoreMax">130</span></span>
+        </p>
+      </section>
+
+      <section class="block">
+        <h2>What's driving it</h2>
+        <div class="factors" id="factorList"></div>
+      </section>
+
+      <section class="block">
+        <h2>What to try</h2>
+        <div class="tips" id="tipList"></div>
+      </section>
+
+      <p class="note">
+        ScreenSense is an awareness tool, not a medical diagnosis.
+        If any symptom worries you, talk to a doctor.
+      </p>
+
+      <div class="actions actions-left">
+        <a class="btn-primary" href="assess.html">Check again</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/theme.js"></script>
+  <script src="js/emoji.js"></script>
+  <script src="js/risk.js"></script>
+  <script src="js/report.js"></script>
+</body>
+</html>

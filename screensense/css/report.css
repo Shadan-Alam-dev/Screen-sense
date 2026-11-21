@@ -1,0 +1,229 @@
+/* ============================================================
+   ScreenSense · report
+   1. Level colours   2. Head   3. Gauge   4. Factors
+   5. Tips & note     6. Responsive
+   ============================================================ */
+
+/* ---------- 1. Level colours ---------- */
+/* body[data-level] is set by report.js; everything uses --level */
+:root {
+  --low: #23946a;
+  --moderate: #d98a1c;
+  --high: #d9473c;
+  --level: var(--moderate);
+}
+
+:root[data-theme="dark"] {
+  --low: #4cc795;
+  --moderate: #f2ad4b;
+  --high: #ff7466;
+}
+
+body[data-level="low"]      { --level: var(--low); }
+body[data-level="moderate"] { --level: var(--moderate); }
+body[data-level="high"]     { --level: var(--high); }
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+
+/* ---------- 2. Head ---------- */
+.result-head h1 { color: var(--level); }
+
+.actions-left { justify-content: flex-start; }
+
+a.btn-primary {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* ---------- 3. Gauge ---------- */
+.gauge-card {
+  margin-top: 32px;
+  padding: 28px 20px 20px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  text-align: center;
+}
+
+.gauge {
+  position: relative;
+  width: min(100%, 360px);
+  margin: 0 auto;
+}
+
+.gauge-svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.gauge-track,
+.gauge-fill {
+  fill: none;
+  stroke-width: 18;
+  stroke-linecap: round;
+}
+
+.gauge-track { stroke: var(--track); }
+
+.gauge-fill {
+  stroke: var(--level);
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;       /* empty; report.js sets the real value */
+  transition: stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1);
+}
+
+.gauge-gap {
+  stroke: var(--surface);
+  stroke-width: 3;
+}
+
+/* the face sits inside the arc */
+.gauge-face {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 34%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+}
+
+.gauge-score {
+  margin-top: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink-soft);
+}
+
+.gauge-score strong {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.gauge-scale {
+  width: min(100%, 360px);
+  margin: -2px auto 0;
+  padding: 0 2%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* ---------- 4. Factors ---------- */
+.block { margin-top: 48px; }
+
+.factors {
+  display: grid;
+  gap: 18px;
+}
+
+.factor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.factor-name { font-weight: 600; }
+
+.factor-points {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.factor-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.factor-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--level);
+  opacity: 0.55;
+  transform-origin: left;
+  transform: scaleX(var(--share));
+  animation: bar-grow 0.9s cubic-bezier(.2,.8,.2,1) 0.3s both;
+}
+
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+}
+
+/* the biggest factor gets the full colour and a card */
+.factor.is-top {
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+}
+.factor.is-top .factor-name { font-size: 18px; }
+.factor.is-top .factor-bar span { opacity: 1; }
+
+.factor-tag {
+  color: var(--level);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+/* ---------- 5. Tips & note ---------- */
+.tips {
+  display: grid;
+  gap: 12px;
+}
+
+.tip {
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--surface);
+  border-left: 4px solid var(--level);
+}
+
+.tip-for {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.tip-text {
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.note {
+  margin-top: 40px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  max-width: 52ch;
+}
+
+.empty { padding-top: 40px; }
+
+/* ---------- 6. Responsive ---------- */
+@media (min-width: 720px) {
+  .gauge-card { padding: 36px 32px 24px; }
+  .tips { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-fill { transition: none; }
+  .factor-bar span { animation: none; }
+}
