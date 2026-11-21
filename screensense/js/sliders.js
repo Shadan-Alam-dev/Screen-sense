@@ -1,66 +1,15 @@
-// sliders.js — builds every question row and wires it to a face
+// sliders.js — builds emoji slider rows and wires each to a face
 //
-// Each question:
-//   min / max / step  → the slider range
-//   calm / worst      → where the face is fully relaxed (t = 0)
-//                       and fully stressed (t = 1). This keeps the
-//                       face honest: 10 h of screen time is already
-//                       "worst", even if the slider goes to 16.
-//   moods             → five short words, low → high risk
+// The question lists live in questions.js. This file only knows
+// how to turn one question into a slider row.
+//
+// Use:  const group = ScreenSenseSliders.mount(container, list);
+//       group.values()   → { "Screen Time (hrs)": 4, ... }
+//       group.renderAll() → re-place faces (after a step appears)
 
-const QUESTIONS = [
-  {
-    id: "screenTime",
-    label: "Screen time per day",
-    min: 0, max: 16, step: 0.5, start: 4,
-    calm: 1, worst: 10,
-    unit: (v) => `${v} hrs`,
-    moods: ["Light", "Typical", "Heavy", "Very heavy", "Nonstop"],
-  },
-  {
-    id: "unlocks",
-    label: "Times you unlock your phone",
-    min: 0, max: 200, step: 5, start: 60,
-    calm: 20, worst: 150,
-    unit: (v) => `${v} a day`,
-    moods: ["Rarely", "Now and then", "Often", "Constantly", "Reflex"],
-  },
-  {
-    id: "notifications",
-    label: "Notifications you get",
-    min: 0, max: 300, step: 10, start: 80,
-    calm: 20, worst: 220,
-    unit: (v) => `${v} a day`,
-    moods: ["Quiet", "Manageable", "Busy", "Noisy", "Buzzing"],
-  },
-  {
-    id: "addiction",
-    label: "How hooked do you feel?",
-    min: 1, max: 10, step: 1, start: 5,
-    calm: 1, worst: 10,
-    unit: (v) => `${v} / 10`,
-    moods: ["Free", "A little", "Fairly", "Very", "Can't stop"],
-  },
-  {
-    id: "headaches",
-    label: "Headaches in a week",
-    min: 0, max: 7, step: 1, start: 1,
-    calm: 0, worst: 6,
-    unit: (v) => (v === 1 ? "1 day" : `${v} days`),
-    moods: ["None", "Rare", "Some", "Most days", "Daily"],
-  },
-  {
-    id: "productivity",
-    label: "How productive are your days?",
-    min: 1, max: 10, step: 1, start: 6,
-    calm: 9, worst: 2, // flipped: low productivity = stressed face
-    unit: (v) => `${v} / 10`,
-    moods: ["Flowing", "Decent", "Meh", "Struggling", "Stuck"],
-  },
-];
-
-const Face = window.ScreenSenseFace;
+const Mood = window.ScreenSenseMood;
 const desktop = window.matchMedia("(min-width: 720px)");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 // ---------- helpers ----------
 
@@ -114,8 +63,8 @@ function buildQuestion(q) {
   // face
   const faceWrap = document.createElement("div");
   faceWrap.className = "q-face";
-  const face = Face.createFace();
-  faceWrap.append(face.svg);
+  const mood = Mood.createMood();
+  faceWrap.append(mood.root);
 
   // slider
   const slider = document.createElement("div");
@@ -155,15 +104,13 @@ function buildQuestion(q) {
     const pct = sliderPct(q, raw);
     const t = riskT(q, raw);
 
-    const expr = Face.setFace(face, t);
-    row.style.setProperty("--face", Face.faceColor(t));
+    Mood.setMood(mood, t);
+    row.style.setProperty("--face", Mood.riskColor(t));
     fill.style.width = `${pct * 100}%`;
 
     value.innerHTML =
       `<strong>${q.unit(v)}</strong> · ${moodWord(q, t)}`;
     range.setAttribute("aria-valuetext", `${q.unit(v)}, ${moodWord(q, t)}`);
-
-    faceWrap.classList.toggle("is-stressed", expr.shake > 0.5);
 
     // the face grows with the value so high numbers catch the eye
     const maxGrow = desktop.matches ? 0.45 : 0.25;
@@ -181,28 +128,91 @@ function buildQuestion(q) {
 
   range.addEventListener("input", render);
 
-  // grab → grow (desktop only, via CSS)
-  range.addEventListener("pointerdown", () => row.classList.add("is-dragging"));
-  const release = () => row.classList.remove("is-dragging");
+  // --- drag feel: grow while held, lean into the drag direction ---
+  let dragging = false;
+  let lastX = 0;
+  let lean = 0;        // current tilt in degrees
+  let leanTarget = 0;  // where the tilt wants to go
+  let ticking = false;
+
+  function animateLean() {
+    // ease toward the target, and let the target settle back to 0
+    lean += (leanTarget - lean) * 0.18;
+    leanTarget *= 0.85;
+    faceWrap.style.setProperty("--lean", `${lean.toFixed(2)}deg`);
+    if (Math.abs(lean) > 0.05 || Math.abs(leanTarget) > 0.05) {
+      requestAnimationFrame(animateLean);
+    } else {
+      faceWrap.style.setProperty("--lean", "0deg");
+      ticking = false;
+    }
+  }
+
+  function nudge(dx) {
+    if (reduceMotion.matches) return;
+    leanTarget = Math.max(-16, Math.min(16, leanTarget + dx * 0.9));
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(animateLean);
+    }
+  }
+
+  range.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    lastX = e.clientX;
+    row.classList.add("is-dragging");
+  });
+
+  window.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    nudge(e.clientX - lastX);
+    lastX = e.clientX;
+  });
+
+  const release = () => {
+    if (!dragging) return;
+    dragging = false;
+    row.classList.remove("is-dragging");
+  };
   window.addEventListener("pointerup", release);
   window.addEventListener("pointercancel", release);
 
   render();
-  return { row, render };
+  return {
+    row,
+    render,
+    key: q.key,
+    value: () => snap(q, Number(range.value)),
+  };
 }
 
 // ---------- mount ----------
 
-const form = document.getElementById("questions");
-const rows = QUESTIONS.map(buildQuestion);
-rows.forEach((r) => form.append(r.row));
+const allRows = []; // every slider on the page, for resize
+
+function mount(container, questions) {
+  const rows = questions.map(buildQuestion);
+  rows.forEach((r) => container.append(r.row));
+  allRows.push(...rows);
+
+  return {
+    renderAll: () => rows.forEach((r) => r.render()),
+    values: () => {
+      const out = {};
+      rows.forEach((r) => (out[r.key] = r.value()));
+      return out;
+    },
+  };
+}
 
 // re-place faces when the layout changes
-function renderAll() {
-  rows.forEach((r) => r.render());
+function renderEverySlider() {
+  allRows.forEach((r) => r.render());
 }
-window.addEventListener("resize", renderAll);
-desktop.addEventListener("change", renderAll);
+window.addEventListener("resize", renderEverySlider);
+desktop.addEventListener("change", renderEverySlider);
 
 // fonts can shift widths slightly once loaded
-if (document.fonts) document.fonts.ready.then(renderAll);
+if (document.fonts) document.fonts.ready.then(renderEverySlider);
+
+window.ScreenSenseSliders = { mount };

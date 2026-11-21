@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ScreenSense · Your habits</title>
+  <title>ScreenSense · Check your habits</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,6 +13,7 @@
   />
 
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/choices.css" />
 </head>
 
 <body>
@@ -38,20 +39,67 @@
   </header>
 
   <main class="page">
-    <section class="intro">
-      <p class="step-count">Step 1 of 3</p>
-      <h1>How do you use your phone?</h1>
-      <p class="lede">
-        Slide each one to where a normal day lands.
-        The face tells you how it feels about it.
-      </p>
-    </section>
+    <!-- three bars, one per step (filled by steps.js) -->
+    <div class="progress" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
 
-    <form class="questions" id="questions" autocomplete="off">
-      <!-- Each slider is built by js/sliders.js from this list -->
+    <form id="assessment" autocomplete="off">
+
+      <!-- Step 1: phone usage -->
+      <section class="step" data-step="1">
+        <div class="intro">
+          <p class="step-count">Step 1 of 3</p>
+          <h1>How do you use your phone?</h1>
+          <p class="lede">
+            Slide each one to where a normal day lands.
+            The face tells you how it feels about it.
+          </p>
+        </div>
+
+        <div class="questions" id="usageSliders"></div>
+      </section>
+
+      <!-- Step 2: habits -->
+      <section class="step" data-step="2" hidden>
+        <div class="intro">
+          <p class="step-count">Step 2 of 3</p>
+          <h1>Your phone habits</h1>
+          <p class="lede">
+            A few quick ones about when and how you use it.
+          </p>
+        </div>
+
+        <div class="questions" id="habitSliders"></div>
+        <div class="choice-stack" id="habitChoices"></div>
+        <div class="yn-list" id="habitYesNo"></div>
+      </section>
+
+      <!-- Step 3: how you feel -->
+      <section class="step" data-step="3" hidden>
+        <div class="intro intro-with-face">
+          <div>
+            <p class="step-count">Step 3 of 3</p>
+            <h1>How have you been feeling?</h1>
+            <p class="lede">
+              Think about the last few weeks. Answer for how
+              things usually are, not just today.
+            </p>
+          </div>
+          <div class="summary-face" id="healthMood"></div>
+        </div>
+
+        <div class="yn-list" id="healthYesNo"></div>
+      </section>
+
     </form>
 
+    <p class="form-error" id="formError" role="alert" hidden></p>
+
     <div class="actions">
+      <button class="btn-ghost" type="button" id="backBtn" hidden>
+        Back
+      </button>
       <button class="btn-primary" type="button" id="nextBtn">
         Next: your habits
       </button>
@@ -59,7 +107,10 @@
   </main>
 
   <script src="js/theme.js"></script>
-  <script src="js/face.js"></script>
+  <script src="js/emoji.js"></script>
+  <script src="js/questions.js"></script>
   <script src="js/sliders.js"></script>
+  <script src="js/choices.js"></script>
+  <script src="js/steps.js"></script>
 </body>
 </html>

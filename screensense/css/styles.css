@@ -1,7 +1,8 @@
 /* ============================================================
    ScreenSense · styles
    1. Theme tokens   2. Base   3. Top bar   4. Intro
-   5. Slider rows    6. Face   7. Actions   8. Responsive
+   5. Slider rows    6. Face   7. Actions   8. Steps
+   9. Responsive
    ============================================================ */
 
 /* ---------- 1. Theme tokens ---------- */
@@ -264,48 +265,114 @@ button { font: inherit; cursor: pointer; }
 }
 .q-range:active::-webkit-slider-thumb { cursor: grabbing; }
 
-/* ---------- 6. Face ---------- */
-.face {
+/* ---------- 6. Face (emoji) ---------- */
+/* .q-face  : size + lean (set by JS)
+   .mood    : two stacked images; one pops in, one shrinks out
+   data-idle: a gentle motion that matches the mood           */
+
+.mood {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: block;
-  overflow: visible;
+  transform: rotate(var(--lean, 0deg));
+  will-change: transform;
 }
 
-.face .skin { fill: var(--face); transition: fill 0.15s linear; }
-.face .feature {
-  fill: #3a2a1e;
-  stroke: #3a2a1e;          /* rounds the lens tips */
-  stroke-width: 2.4;
-  stroke-linejoin: round;
-}
-.face .line {
-  fill: none;
-  stroke: #3a2a1e;
-  stroke-width: 3.2;
-  stroke-linecap: round;
-}
-.face .cheek { fill: #ff6b6b; }
-.face .sweat { fill: #6fb9ff; }
-
-/* a soft shadow on the wrapper, not an SVG filter (cheaper) */
-.q-face {
+/* soft ground shadow; grows when the face is lifted (dragged) */
+.mood::before {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: -6%;
+  height: 16%;
   border-radius: 50%;
-  box-shadow: 0 6px 16px rgba(26, 34, 51, 0.16);
+  background: rgba(26, 34, 51, 0.22);
+  filter: blur(5px);
+  transform: scale(var(--shadow-scale, 1));
+  opacity: var(--shadow-opacity, 0.7);
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
-:root[data-theme="dark"] .q-face {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+:root[data-theme="dark"] .mood::before {
+  background: rgba(0, 0, 0, 0.6);
 }
 
-/* strained wobble, only at the very top */
-@keyframes wobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-2deg); }
-  75% { transform: rotate(2deg); }
-}
-.q-face.is-stressed .face {
-  animation: wobble 0.5s ease-in-out infinite;
+.mood-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
   transform-origin: 50% 60%;
+}
+
+/* swap: old one shrinks away, new one pops in with a spring */
+@keyframes mood-in {
+  0%   { transform: scale(0.55) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(1.10) rotate(3deg);  opacity: 1; }
+  80%  { transform: scale(0.96) rotate(-1deg); }
+  100% { transform: scale(1)    rotate(0deg);  opacity: 1; }
+}
+@keyframes mood-out {
+  0%   { transform: scale(1);    opacity: 1; }
+  100% { transform: scale(0.7);  opacity: 0; }
+}
+.mood-img.is-in  { animation: mood-in 0.42s cubic-bezier(.2,.9,.3,1.2) both; }
+.mood-img.is-out { animation: mood-out 0.18s ease-in both; }
+.mood-img.no-anim { animation: none; opacity: 1; }
+
+/* idle motions, applied to the live image only */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04) translateY(-1%); }
+}
+@keyframes tense {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(1.5%); }
+}
+@keyframes shiver {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  25%      { transform: translateX(-2%) rotate(-1.5deg); }
+  75%      { transform: translateX(2%) rotate(1.5deg); }
+}
+@keyframes dizzy {
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(4deg) translateY(-2%); }
+  50%  { transform: rotate(0deg) translateY(0); }
+  75%  { transform: rotate(-4deg) translateY(-2%); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+@keyframes drained {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(5%) rotate(-3deg) scale(0.98); }
+}
+.mood[data-idle="breathe"] .mood-img.is-in {
+  animation: mood-in 0.42s cubic-bezier(.2,.9,.3,1.2) both,
+             breathe 2.8s ease-in-out 0.42s infinite;
+}
+.mood[data-idle="tense"] .mood-img.is-in {
+  animation: mood-in 0.42s cubic-bezier(.2,.9,.3,1.2) both,
+             tense 0.5s ease-in-out 0.42s infinite;
+}
+.mood[data-idle="shiver"] .mood-img.is-in {
+  animation: mood-in 0.42s cubic-bezier(.2,.9,.3,1.2) both,
+             shiver 0.28s ease-in-out 0.42s infinite;
+}
+.mood[data-idle="dizzy"] .mood-img.is-in {
+  animation: mood-in 0.42s cubic-bezier(.2,.9,.3,1.2) both,
+             dizzy 1.6s ease-in-out 0.42s infinite;
+}
+.mood[data-idle="drained"] .mood-img.is-in {
+  animation: mood-in 0.42s cubic-bezier(.2,.9,.3,1.2) both,
+             drained 2.6s ease-in-out 0.42s infinite;
+}
+
+/* lifted while dragging */
+.q.is-dragging .mood {
+  --shadow-scale: 1.25;
+  --shadow-opacity: 0.45;
 }
 
 /* ---------- 7. Actions ---------- */
@@ -313,7 +380,21 @@ button { font: inherit; cursor: pointer; }
   margin-top: 48px;
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
 }
+
+.btn-ghost {
+  margin-right: auto;       /* Back sits left, Next stays right */
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+.btn-ghost:hover { border-color: var(--ink-soft); }
+.btn-ghost[hidden] { display: none; }
 
 .btn-primary {
   background: var(--accent);
@@ -328,7 +409,70 @@ button { font: inherit; cursor: pointer; }
 .btn-primary:hover { filter: brightness(1.06); }
 .btn-primary:active { transform: translateY(1px); }
 
-/* ---------- 8. Responsive: tablet & laptop ---------- */
+/* ---------- 8. Steps ---------- */
+.progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 28px;
+}
+
+.progress span {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--track);
+  position: relative;
+  overflow: hidden;
+}
+
+/* fill grows left → right when a step starts */
+.progress span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+}
+.progress span.is-done::after,
+.progress span.is-current::after { transform: scaleX(1); }
+.progress span.is-current::after { opacity: 0.55; }
+
+/* a step slides in from the side it came from */
+@keyframes step-in-forward {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes step-in-back {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: none; }
+}
+.step.enter-forward { animation: step-in-forward 0.35s ease-out both; }
+.step.enter-back    { animation: step-in-back 0.35s ease-out both; }
+
+/* step 3: summary face beside the heading */
+.intro-with-face {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.summary-face {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  margin-top: 28px;
+}
+
+.form-error {
+  margin-top: 24px;
+  color: var(--missing, #d9483b);
+  font-weight: 500;
+}
+
+/* ---------- 9. Responsive: tablet & laptop ---------- */
 @media (min-width: 720px) {
   :root {
     --face-size: 60px;
@@ -336,6 +480,11 @@ button { font: inherit; cursor: pointer; }
   }
 
   .page { padding-top: 40px; }
+
+  .summary-face {
+    width: 96px;
+    height: 96px;
+  }
 
   .q { gap: 14px; }
 
@@ -380,8 +529,11 @@ button { font: inherit; cursor: pointer; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .q-face, .q-fill, .face .skin { transition: none; }
-  .q-face.is-stressed .face { animation: none; }
+  .q-face, .q-fill, .mood::before { transition: none; }
+  .step.enter-forward, .step.enter-back { animation: none; }
+  .progress span::after { transition: none; }
+  .mood-img { animation: none !important; opacity: 1; }
+  .mood-img.is-out { opacity: 0; }
   .q.is-dragging .q-face {
     transform: translate(0, -50%) scale(var(--face-scale, 1));
   }
