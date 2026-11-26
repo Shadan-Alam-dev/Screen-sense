@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ScreenSense · Is your phone wearing you out?</title>
+  <meta
+    name="description"
+    content="A two-minute check that turns your phone habits into a Low, Moderate or High health risk, with tips that fit you."
+  />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#1b7f79" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+</head>
+
+<body class="landing">
+  <header class="topbar">
+    <a class="wordmark" href="index.html">ScreenSense</a>
+
+    <button
+      id="themeToggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Switch to dark theme"
+    >
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2" />
+        <path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6
+                 M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8
+                 M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
+      </svg>
+    </button>
+  </header>
+
+  <main class="page">
+
+    <!-- 1. Hero: the pitch + a live slider to play with -->
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Is your phone wearing you out?</h1>
+        <p class="lede">
+          Answer a few questions about how you use your phone and
+          how you've been feeling. In about two minutes you'll see
+          your health risk level and what's driving it.
+        </p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="assess.html">Start the check</a>
+          <span class="hero-meta">Free, no sign-up</span>
+        </div>
+      </div>
+
+      <div class="demo-card">
+        <p class="demo-hint">
+          <span class="hint-desktop">Drag the face to try it</span>
+          <span class="hint-phone">Slide to try it</span>
+        </p>
+        <div class="questions" id="demoSlider"></div>
+      </div>
+    </section>
+
+    <!-- 2. How it works: a real sequence, so it's numbered -->
+    <section class="block" aria-labelledby="howTitle">
+      <h2 id="howTitle">How it works</h2>
+      <ol class="how">
+        <li>
+          <span class="how-num">1</span>
+          <h3>Tell us your habits</h3>
+          <p>Screen time, unlocks, late-night use and how you've
+             been feeling. Sliders and taps, no typing.</p>
+        </li>
+        <li>
+          <span class="how-num">2</span>
+          <h3>See your risk level</h3>
+          <p>A model trained on survey data places you at Low,
+             Moderate or High risk.</p>
+        </li>
+        <li>
+          <span class="how-num">3</span>
+          <h3>Get tips that fit you</h3>
+          <p>See the habits adding the most to your score, with one
+             small change for each.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 3. What the check looks at -->
+    <section class="block" aria-labelledby="whatTitle">
+      <h2 id="whatTitle">What the check looks at</h2>
+      <ul class="looks">
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
+            <path d="M10.5 18.5h3" />
+          </svg>
+          <span>Screen time</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="10.5" width="14" height="10" rx="2" />
+            <path d="M8 10.5V7.5a4 4 0 0 1 7.6-1.7" />
+          </svg>
+          <span>Unlocks</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z" />
+            <path d="M10 20.5a2 2 0 0 0 4 0" />
+          </svg>
+          <span>Notifications</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10z" />
+          </svg>
+          <span>Late-night use</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span>Eyes and headaches</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 12h3l2-5 3.5 10 2.5-7 1.5 2H21" />
+          </svg>
+          <span>Sleep and stress</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 4. Last call to action -->
+    <section class="closing">
+      <h2>Two minutes. One honest look.</h2>
+      <a class="btn-primary" href="assess.html">Start the check</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      ScreenSense is an awareness tool, not a medical diagnosis.
+      If a symptom worries you, talk to a doctor.
+    </p>
+    <p>
+      An NTCC project, Amity Institute of Information Technology,
+      Amity University Patna.
+    </p>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/emoji.js"></script>
+  <script src="js/sliders.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

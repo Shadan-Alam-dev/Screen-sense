@@ -1,0 +1,194 @@
+/* ============================================================
+   ScreenSense · landing page
+   1. Wider layout   2. Hero   3. How it works
+   4. What we look at   5. Closing & footer   6. Responsive
+   ============================================================ */
+
+/* ---------- 1. Wider layout ---------- */
+.landing .topbar,
+.landing .page,
+.landing .footer {
+  max-width: 1040px;
+}
+
+.landing h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(24px, 3.2vw, 30px);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0 0 24px;
+}
+
+.landing h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 14px 0 6px;
+}
+
+.block { margin-top: 88px; }
+
+a.btn-primary {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* ---------- 2. Hero ---------- */
+.hero {
+  display: grid;
+  gap: 40px;
+  padding-top: 16px;
+}
+
+.hero h1 {
+  font-size: clamp(40px, 6.4vw, 66px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  max-width: 12ch;
+  margin-bottom: 20px;
+}
+
+.hero .lede {
+  font-size: 18px;
+  max-width: 42ch;
+}
+
+.hero-actions {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+}
+
+.hero-meta {
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+/* the playable slider */
+.demo-card {
+  align-self: center;
+  padding: 24px 20px 28px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+}
+
+.demo-card .questions { margin-top: 16px; }
+
+.demo-hint {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.hint-desktop { display: none; }
+
+/* ---------- 3. How it works ---------- */
+.how {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 28px;
+}
+
+.how p {
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+
+.how-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+
+/* ---------- 4. What we look at ---------- */
+.looks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* minmax(0, …) lets long labels wrap instead of overflowing */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.looks li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* very small phones: one per row */
+@media (max-width: 359px) {
+  .looks { grid-template-columns: 1fr; }
+}
+
+.looks svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- 5. Closing & footer ---------- */
+/* an inverted band: dark on light theme, light on dark theme */
+.closing {
+  margin-top: 88px;
+  padding: 44px 24px;
+  border-radius: 28px;
+  background: var(--ink);
+  color: var(--bg);
+  text-align: center;
+}
+
+.landing .closing h2 {
+  color: var(--bg);
+  margin-bottom: 24px;
+}
+
+.footer {
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  display: grid;
+  gap: 6px;
+}
+
+/* ---------- 6. Responsive ---------- */
+@media (min-width: 720px) {
+  .hint-desktop { display: inline; }
+  .hint-phone { display: none; }
+
+  .how { grid-template-columns: repeat(3, 1fr); }
+  .looks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .demo-card { padding: 28px 32px 36px; }
+}
+
+@media (min-width: 940px) {
+  .hero {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    align-items: center;
+    padding-top: 48px;
+  }
+  .block { margin-top: 112px; }
+}
