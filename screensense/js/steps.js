@@ -1,7 +1,7 @@
 // steps.js — the 3-step flow
 //
 //   Step 1  usage   → emoji sliders
-//   Step 2  habits  → slider + chips + one Yes / No card
+//   Step 2  habits  → chips + one Yes / No card
 //   Step 3  health  → Yes / No cards + one summary face
 //
 // "Next" checks the current step, then slides to the next one.
@@ -18,9 +18,6 @@
     document.getElementById("usageSliders"), USAGE_SLIDERS
   );
 
-  const habitSliders = Sliders.mount(
-    document.getElementById("habitSliders"), HABIT_SLIDERS
-  );
   const habitChoices = Choices.mountChips(
     document.getElementById("habitChoices"), HABIT_CHOICES
   );
@@ -54,7 +51,7 @@
     },
     {
       next: "Next: how you feel",
-      sliders: [habitSliders],
+      sliders: [],
       required: [habitChoices, habitYesNo],
     },
     {
@@ -145,9 +142,12 @@
   // ---------- finish ----------
 
   function allAnswers() {
+    const usageAnswers = usage.values();
     return {
-      ...usage.values(),
-      ...habitSliders.values(),
+      ...usageAnswers,
+      // the survey never asked this separately; our notebook copies
+      // screen time into it, so the website does the same
+      "Avg Daily Use (hrs)": usageAnswers["Screen Time (hrs)"],
       ...habitChoices.values(),
       ...habitYesNo.values(),
       ...health.values(),

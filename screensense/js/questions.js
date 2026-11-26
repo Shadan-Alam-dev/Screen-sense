@@ -68,18 +68,6 @@ const USAGE_SLIDERS = [
 
 // ---------- Step 2: habits ----------
 
-const HABIT_SLIDERS = [
-  {
-    id: "avgDailyUse",
-    key: "Avg Daily Use (hrs)",
-    label: "Average use over the last week",
-    min: 0, max: 16, step: 0.5, start: 4,
-    calm: 1, worst: 10,
-    unit: (v) => `${v} hrs a day`,
-    moods: ["Light", "Typical", "Heavy", "Very heavy", "Nonstop"],
-  },
-];
-
 // single-choice chips
 //   value → exactly what the dataset stores
 const HABIT_CHOICES = [
