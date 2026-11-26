@@ -1,7 +1,7 @@
 // risk.js — turns the saved answers into a risk result
 //
-// These are the same 13 rules as compute_risk_score() in our
-// notebook. For now the website scores in the browser; later the
+// These are the same 13 rules as the scoring cell in our final
+// notebook (decTree_Svm_survey.ipynb). For now the website scores in the browser; later the
 // FastAPI model will return the level and this file will only
 // explain the result (top factors + tips).
 //
@@ -68,13 +68,13 @@
       tip: "Before you open an app, name what you came for. Close it once that's done.",
     },
     {
-      key: "Sleep Difficulty", name: "Trouble sleeping", max: 10,
-      points: (v) => v * 10,
+      key: "Sleep Difficulty", name: "Trouble sleeping", max: 12,
+      points: (v) => v * 12,
       tip: "Switch on night mode after sunset and keep a fixed time to put the phone down.",
     },
     {
-      key: "Anxious/Stressed", name: "Feeling anxious or stressed", max: 8,
-      points: (v) => v * 8,
+      key: "Anxious/Stressed", name: "Feeling anxious or stressed", max: 10,
+      points: (v) => v * 10,
       tip: "Mute news and social feeds for a weekend and notice how you feel.",
     },
     {
@@ -99,14 +99,16 @@
     },
   ];
 
-  const MAX_SCORE = RULES.reduce((sum, r) => sum + r.max, 0); // 130
+  const MAX_SCORE = RULES.reduce((sum, r) => sum + r.max, 0); // 134
   const BIGGEST_RULE = Math.max(...RULES.map((r) => r.max));  // 25
 
-  // Level cut-offs on the 0–130 score.
+  // Level cut-offs on the 0–134 score, taken from the survey data:
+  //   Low      = up to the 40th percentile (57)
+  //   High     = above the 75th percentile (74.5)
   // TODO: replace with the model's prediction once the API is ready.
   const LEVELS = [
-    { id: "low",      name: "Low risk",      upTo: 35 },
-    { id: "moderate", name: "Moderate risk", upTo: 70 },
+    { id: "low",      name: "Low risk",      upTo: 57 },
+    { id: "moderate", name: "Moderate risk", upTo: 74.5 },
     { id: "high",     name: "High risk",     upTo: MAX_SCORE },
   ];
 
